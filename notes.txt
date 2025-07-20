@@ -1,0 +1,20 @@
+every time the timer is at 14 sec and then check a few frames before if its at 15 then its in tellop and if its at 0 its the start of a match. 
+
+note down team numbers and quali number for games and the start and end timestamp
+
+before match both scores and times are 0
+after timer is 0 but scores are up
+check if certain pixels are blue/red
+
+
+# screen recording just quali number
+# x, y, w, h = 925, 1475, 1050, 75
+
+# screen record all
+# x, y, w, h = 675, 1475, 1550, 200
+
+# screen record just team numbers
+# x, y, w, h = 675, 1550, 1550, 100
+
+# just scores and timers
+x, y, w, h = 1175, 1550, 550, 100
