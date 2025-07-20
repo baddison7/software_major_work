@@ -54,3 +54,10 @@ while True:
 # red   bottom 1175,1638,170,12
 # blue  bottom 1535,1638,170,12
 # white bottom 1355,1632,170,18
+
+# quali number 950,1490,975,60
+# short number 1150,1490,600,60
+
+# team numbers 675,1550,1550,100
+# blue team    1710,1585,430,50
+# red team     740,1585,425,50

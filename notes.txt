@@ -7,9 +7,6 @@ after timer is 0 but scores are up
 check if certain pixels are blue/red
 
 
-# screen recording just quali number
-# x, y, w, h = 925, 1475, 1050, 75
-
 # screen record all
 # x, y, w, h = 675, 1475, 1550, 200
 
@@ -23,3 +20,15 @@ x, y, w, h = 1175, 1550, 550, 100
 how to optimise
 run at 500 normally, when nothing is changing run at 1000 or 2000 and when something has changed go back to 500
 once a match has started skip forward at least 3 min (could do like 7)
+
+Qualification 22 of 57
+7128
+9189
+9986
+9994
+9991
+9992 @
+
+type = Qualification
+number = 22
+teams = [[7128, 9189, 9986], [9994, 9991, 9992]]
