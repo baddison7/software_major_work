@@ -18,3 +18,8 @@ check if certain pixels are blue/red
 
 # just scores and timers
 x, y, w, h = 1175, 1550, 550, 100
+
+
+how to optimise
+run at 500 normally, when nothing is changing run at 1000 or 2000 and when something has changed go back to 500
+once a match has started skip forward at least 3 min (could do like 7)
