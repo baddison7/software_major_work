@@ -3,13 +3,14 @@ import cv2
 # === CONFIG ===
 # video_path = "screenRecording4.mov"  # <-- change if needed
 video_path = 'videoplayback720Long.mp4'
-frame_to_show = 100000  # choose which frame to extract
+# frame_to_show = 100000  # choose which frame to extract
+frame_to_show = 502955  # choose which frame to extract
 # frame_to_show = 1  # change to the frame you want to show
 
 # === Load frame ===
 cap = cv2.VideoCapture(video_path)
 total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-
+print(f'total frames {total_frames}')
 if frame_to_show >= total_frames:
     print(f"Error: Frame {frame_to_show} exceeds total frame count {total_frames}")
     exit()
@@ -69,7 +70,8 @@ while True:
 # blue  bottom 682, 677, 76, 5
 # white bottom 602, 652, 76, 7
 # white bottom 602, 675, 76, 7
-
+# white Lside 602, 642, 7, 40
+# white Rside 670, 642, 7, 40
 
 # quali number 422, 596, 433, 24
 # short number 511, 596, 267, 24
@@ -81,3 +83,5 @@ while True:
 
 #timer
 # 601, 642, 77, 40
+
+# 659, 657, 5, 12

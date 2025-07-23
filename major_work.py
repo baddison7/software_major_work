@@ -90,6 +90,8 @@ class videolong:
         self.red_region = 522, 677, 76, 5
         self.blue_region = 682, 677, 76, 5
         self.white_region = 602, 675, 76, 7
+        self.white_left_region = 602, 642, 7, 40
+        self.white_right_region = 670, 642, 7, 40
         self.zero_region = 659, 657, 5, 12
         self.timer_x, self.timer_y, self.timer_w, self.timer_h = 601, 642, 77, 40
         self.quali_x, self.quali_y, self.quali_w, self.quali_h = 300, 607, 680, 80
@@ -106,20 +108,22 @@ video_path = video.video_path
 cap = cv2.VideoCapture(video_path)
 total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
-os.makedirs("frames", exist_ok=True)
+os.makedirs("timer", exist_ok=True)
+os.makedirs("auto", exist_ok=True)
 os.makedirs("quali", exist_ok=True)
 
 red_bgr = (54, 45, 180)
 blue_bgr = (157, 103, 50)
 
-frame_number = 0
-key_frame_count_down = 0
+frame_number = 500000
 count_down = 0
 prev_timer_roi_gray = None
 diff_threshold = 8500 # false positves at 7500
 matches = []
 
 cap.set(cv2.CAP_PROP_POS_FRAMES, video.start_frame)
+total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+fps = cap.get(cv2.CAP_PROP_FPS)
 ocr_cache = {}    
 
 while True:
@@ -139,64 +143,38 @@ while True:
     scoreboard_visible = (
         region_color_match(frame, video.red_region, red_bgr, tolerance=40, min_ratio=0.2) and
         region_color_match(frame, video.blue_region, blue_bgr, tolerance=40, min_ratio=0.2) and
-        region_color_match(frame, video.white_region, (230, 230, 230), tolerance=30, min_ratio=0.2)
+        region_color_match(frame, video.white_region, (230, 230, 230), tolerance=20, min_ratio=0.2) and
+        region_color_match(frame, video.white_left_region, (230, 230, 230), tolerance=20, min_ratio=0.2) and
+        region_color_match(frame, video.white_right_region, (230, 230, 230), tolerance=20, min_ratio=0.2)
+
     )
 
     if scoreboard_visible:
         timer_roi = get_timer_roi(frame)
-
         timer_roi_bw = cv2.GaussianBlur(cv2.cvtColor(timer_roi, cv2.COLOR_BGR2GRAY), (5,5), 0)
 
-        white = region_color_match(frame, video.zero_region, (255, 255, 255), tolerance=30, min_ratio=0.2)
-
         if has_timer_changed(prev_timer_roi_gray, timer_roi_bw, diff_threshold):
-            cv2.imwrite('frames/roi_frame_{}.png'.format(frame_number), timer_roi)
-            if key_frame_count_down <= 0:
-                
-                cv2.imwrite('frames/roi_frame_{}.png'.format(frame_number), timer_roi)
-                if white == False:
-                    _, buffer = cv2.imencode('.png', timer_roi) # Encode ROI as PNG bytes for OCR API
-                    timer = ocr_space_image_bytes(buffer.tobytes(), timer_roi)
-                    print(f"[Frame {frame_number}] timer Result: {timer}")
-                else:
-                    timer = '0:00'
-                    print(f"[Frame {frame_number}] timer Result: {timer} (white)")
-                
-                if timer == '0:14':
-                    if white == True:
-                        print("false positive")
-                    count_down = 4530
-                    print(f"[Frame {frame_number}] game started")
-                    
-                    quali_roi = get_quali_roi(frame)
-                    cv2.imwrite('quali/roi_frame_{}.png'.format(frame_number), quali_roi)
-                    _, buffer = cv2.imencode('.png', quali_roi) # Encode ROI as PNG bytes for OCR API
-                    # text = ocr_space_image_bytes(buffer.tobytes())
+            if region_color_match(frame, video.zero_region, (255, 255, 255), tolerance=30, min_ratio=0.2) == False:
+                cv2.imwrite('timer/roi_frame_{}.png'.format(frame_number), timer_roi)
 
-                    # info = parse_score_text(text)
-                    # matches.append(Match(info['type'], info['number'], info['teams'], frame_number, 'XXX'))
-                elif timer == '0:01':
-                    if white == True:
-                        print("false positive")
-                    key_frame_count_down = 1
-                elif timer == '0:00':
-                    if white == False:
-                        print("false negitive")
-
+                # _, buffer = cv2.imencode('.png', timer_roi) # Encode ROI as PNG bytes for OCR API
+                # timer = ocr_space_image_bytes(buffer.tobytes(), timer_roi)
+                timer = '0:14'
+                print(f"[Frame {frame_number}] timer Result: {timer}")
+                print(f'timestamp: {frame_number / fps}')
+                count_down = 4600
+                
+                quali_roi = get_quali_roi(frame)
+                cv2.imwrite('quali/roi_frame_{}.png'.format(frame_number), quali_roi)
+                # _, buffer = cv2.imencode('.png', quali_roi) # Encode ROI as PNG bytes for OCR API
+                # text = ocr_space_image_bytes(buffer.tobytes())
+                # info = parse_score_text(text)
+                # matches.append(Match(info['type'], info['number'], info['teams'], frame_number, 'XXX'))
             else:
-                key_frame_count_down -= 1
-                # print(f"[Frame {frame_number}] Count down: {count_down} frames remaining")
-            # found_score_board = True      
-        else:
-            pass
+                cv2.imwrite('auto/roi_frame_{}.png'.format(frame_number), timer_roi)
 
         prev_timer_roi_gray = timer_roi_bw
     else:
         prev_timer_roi_gray = None  # reset timer diff if scoreboard disappears
-        # if found_score_board == True:
-            # print(f"[Frame {frame_number}] No scoreboard detected.")
-            # found_score_board = False
-        # if not scoreboard_visible and frame_number % 500 == 0:
-            # cv2.imwrite(f"missing_scoreboard/roi_frame_{frame_number}.png", frame)
 
 cap.release()

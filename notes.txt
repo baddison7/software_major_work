@@ -32,3 +32,69 @@ Qualification 22 of 57
 type = Qualification
 number = 22
 teams = [[7128, 9189, 9986], [9994, 9991, 9992]]
+
+timer wasnt detecting change properly, to picky, still cant detect ending in 5
+
+
+/usr/local/bin/python3 "/Users/51715/Documents/Software Major Work/gpt_imporved_version.py"
+51715@20252001 Software Major Work % /usr/local/bin/python3 "/Users/51715/Documents/Software Major Work/gpt_imporved_version.py"
+Starting processing at frame 500000 / 959641.
+[Frame 500002] Timer change detected.
+[Frame 500002] OCR request sent.
+[Frame 500002] Timer OCR: '0:00'
+[Frame 502954] Timer change detected.
+[Frame 502954] OCR request sent.
+[Frame 502954] Timer OCR: '0:14'
+[Frame 502954] Match likely detected. Starting countdown.
+[Frame 502954] OCR request sent.
+[Frame 502954] Quali text: DIVE
+5584
+9992
+10
+Qualification 19 of 57
+9995
+9189
+R*FSC..aæ
+6497 5876
+[Frame 503388] Timer change detected.
+[Frame 505744] Timer change detected.
+Progress: Frame 510000 (53.14%)
+[Frame 514428] Timer change detected.
+[Frame 517368] Timer change detected.
+Progress: Frame 520000 (54.19%)
+[Frame 521070] Timer change detected.
+[Frame 521500] Timer change detected.
+[Frame 523860] Timer change detected.
+
+
+
+can skip forward a required ammount of frames instead of counting down the timer changes
+can also make the timer image only black and white for higher chance of a cache hit
+
+games last 4,530 frames
+
+
+wing region x:659, y:657, w:5, h:12
+Enter region as x,y,width,height (or 'q' to quit): q
+51715@20252001 Software Major Work % /usr/local/bin/python3 "/Users/51715/Documents/Software Major Work/major_work.py"
+[Frame 5] timer Result: 0:00
+positive
+[Frame 2955] timer Result: 0:14
+negitive
+[Frame 2955] game started
+[Frame 7490] timer Result: 0:01
+negitive
+[Frame 17370] timer Result: 0:00
+positive
+[Frame 21070] timer Result: 0:14
+negitive
+[Frame 21070] game started
+[Frame 25605] timer Result: 0:01
+negitive
+[Frame 28940] timer Result: 0:00
+positive
+
+also had false postive and false negitive
+
+change the score board detection to be both horozontal and vertial
+change the speed when there is no score board to go faster
