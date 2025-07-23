@@ -1,8 +1,10 @@
 import cv2
 
 # === CONFIG ===
-video_path = "screenRecording4.mov"  # <-- change if needed
-frame_to_show = 0  # choose which frame to extract
+# video_path = "screenRecording4.mov"  # <-- change if needed
+video_path = 'videoplayback720Long.mp4'
+frame_to_show = 100000  # choose which frame to extract
+# frame_to_show = 1  # change to the frame you want to show
 
 # === Load frame ===
 cap = cv2.VideoCapture(video_path)
@@ -38,7 +40,7 @@ while True:
 
         # Draw the region on the full frame for context
         frame_copy = frame.copy()
-        cv2.rectangle(frame_copy, (x, y), (x + w, y + h), (0, 255, 0), 2)
+        cv2.rectangle(frame_copy, (x, y), (x + w, y + h), (0, 255, 0), 1)
         cv2.imshow("Full Frame (region highlighted)", frame_copy)
         cv2.imshow("Region Crop", roi)
 
@@ -61,3 +63,21 @@ while True:
 # team numbers 675,1550,1550,100
 # blue team    1710,1585,430,50
 # red team     740,1585,425,50
+
+# red   bottom 522, 655, 76, 5
+# red   bottom 522, 677, 76, 5
+# blue  bottom 682, 677, 76, 5
+# white bottom 602, 652, 76, 7
+# white bottom 602, 675, 76, 7
+
+
+# quali number 422, 596, 433, 24
+# short number 511, 596, 267, 24
+
+#whole thing
+# 675, 1475, 1550, 200
+# 300, 590, 688, 80
+# 300, 607, 680, 80
+
+#timer
+# 601, 642, 77, 40
