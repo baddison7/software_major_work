@@ -1,5 +1,8 @@
 import cv2, os, requests, re, hashlib
 import numpy as np
+# import keras_ocr
+
+# ocr_pipeline = keras_ocr.pipeline.Pipeline()
 
 # checks if regoin matches the target color within a tolerance
 def region_color_match(frame, region, target_bgr, tolerance=40, min_ratio=0.2):
@@ -23,10 +26,12 @@ def has_timer_changed(prev_timer_roi_gray, curr_timer_roi_gray, threshold=2):
     return np.sum(diff) >= threshold
 
 # takes an in ROI, caches it and returns the text in it
-def ocr_space_image_bytes(image_bytes, timer_roi):
-    gray = cv2.cvtColor(timer_roi, cv2.COLOR_BGR2GRAY)
-    _, timer_roi_bw = cv2.threshold(gray, 128, 255, cv2.THRESH_BINARY)
-    key = hashlib.md5(timer_roi_bw.tobytes()).hexdigest()
+def ocr_space_image_bytes(roi):
+    _, buffer = cv2.imencode('.png', roi) # Encode ROI as PNG bytes for OCR API
+    image_bytes = buffer.tobytes()
+    gray = cv2.cvtColor(roi, cv2.COLOR_BGR2GRAY)
+    _, roi_bw = cv2.threshold(gray, 128, 255, cv2.THRESH_BINARY)
+    key = hashlib.md5(roi_bw.tobytes()).hexdigest()
     if key in ocr_cache:
         print('cache hit')
         return ocr_cache[key]
@@ -48,6 +53,13 @@ def ocr_space_image_bytes(image_bytes, timer_roi):
         text = ""
     
     return text
+
+# def ocr_keras_image(roi):
+#     # keras-ocr expects RGB images, not BGR
+#     roi_rgb = cv2.cvtColor(roi, cv2.COLOR_BGR2RGB)
+#     predictions = ocr_pipeline.recognize([roi_rgb])
+#     texts = [text for text, box in predictions[0]]
+#     return '\n'.join(texts)
 
 def parse_score_text(text):
     lines = [re.sub(r'[^\d\w\s]', '', line).strip() for line in text.strip().splitlines() if line.strip()]
@@ -146,7 +158,6 @@ while True:
         region_color_match(frame, video.white_region, (230, 230, 230), tolerance=20, min_ratio=0.2) and
         region_color_match(frame, video.white_left_region, (230, 230, 230), tolerance=20, min_ratio=0.2) and
         region_color_match(frame, video.white_right_region, (230, 230, 230), tolerance=20, min_ratio=0.2)
-
     )
 
     if scoreboard_visible:
@@ -157,8 +168,9 @@ while True:
             if region_color_match(frame, video.zero_region, (255, 255, 255), tolerance=30, min_ratio=0.2) == False:
                 cv2.imwrite('timer/roi_frame_{}.png'.format(frame_number), timer_roi)
 
-                # _, buffer = cv2.imencode('.png', timer_roi) # Encode ROI as PNG bytes for OCR API
-                # timer = ocr_space_image_bytes(buffer.tobytes(), timer_roi)
+                timer = ocr_space_image_bytes(timer_roi)
+                # print(f'keras orc: {ocr_keras_image(timer_roi)}')
+                print(f'timer orc: {timer}')
                 timer = '0:14'
                 print(f"[Frame {frame_number}] timer Result: {timer}")
                 print(f'timestamp: {frame_number / fps}')
@@ -166,8 +178,7 @@ while True:
                 
                 quali_roi = get_quali_roi(frame)
                 cv2.imwrite('quali/roi_frame_{}.png'.format(frame_number), quali_roi)
-                # _, buffer = cv2.imencode('.png', quali_roi) # Encode ROI as PNG bytes for OCR API
-                # text = ocr_space_image_bytes(buffer.tobytes())
+                # text = ocr_space_image_bytes(quali_roi)
                 # info = parse_score_text(text)
                 # matches.append(Match(info['type'], info['number'], info['teams'], frame_number, 'XXX'))
             else:

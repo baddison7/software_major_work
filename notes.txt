@@ -98,3 +98,5 @@ also had false postive and false negitive
 
 change the score board detection to be both horozontal and vertial
 change the speed when there is no score board to go faster
+
+put keras ORC in next so it can check more often
